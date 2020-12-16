@@ -1,0 +1,32 @@
+---
+- hosts: mamaearth_reactjs
+  become: yes
+  become_user: root
+  tasks:
+  - name: Install Packages
+    apt: name={{ item }} update_cache=yes state=latest
+    with_items:
+      - curl
+
+  - name: Curl to install nodejs
+    shell: curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+  - name: Install Packages
+    apt: name={{ item }} update_cache=yes state=latest
+    with_items:
+      - nodejs
+
+  - name: Run following shell command to install npm dependencies
+    shell: |
+      npm install npm@latest -g
+      npm install -g create-react-app
+      npx create-react-app mamaearth
+    
+  - name: Creates directory
+    file:
+      path: /home/sanchit/mamaearth
+      state: directory
+
+  - name: Start APP
+    command: npm start chdir=/home/sanchit/mamaearth
+    ignore_errors: yes
